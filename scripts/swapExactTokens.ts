@@ -14,17 +14,16 @@ const main = async () => {
   const impersonatedSigner = await ethers.getSigner(USDCHolder);
 
   const amountOutDai = ethers.parseUnits("2000", 18);
-  const amountInUsdc = ethers.parseUnits("1");
+  const minAmountIn = ethers.parseUnits("1");
 
   const USDC = await ethers.getContractAt("IERC20", USDCAddress);
   const DAI = await ethers.getContractAt("IERC20", DAIAddress);
-  const WETH = await ethers.getContractAt("IERC20", wethAdress);
 
   const ROUTER = await ethers.getContractAt("IUniswap", UNIRouter);
 
   const approveTx = await USDC.connect(impersonatedSigner).approve(
     UNIRouter,
-    amountInUsdc
+    minAmountIn
   );
   await approveTx.wait();
   USDCHolder;
@@ -39,7 +38,7 @@ const main = async () => {
     impersonatedSigner
   ).swapTokensForExactTokens(
     amountOutDai,
-    amountInUsdc,
+    minAmountIn,
     [USDCAddress, DAIAddress],
     impersonatedSigner.address,
     deadline
